@@ -32,12 +32,15 @@ typedef enum {
 	
 volatile robotState MOVEMENT_STATE = STOPPED;
 volatile musicState MUSIC_STATE = STOP_MUSIC;
+//volatile selfDrivingMode = 
  
 	const osThreadAttr_t thread1_attr_high = {
 	.priority = osPriorityHigh                    //Set initial thread priority to high   
 };
 
 osThreadId_t motor_forward, motor_backward, motor_left, motor_right, motor_diag_right, motor_diag_left;
+
+osThreadId_t self_driving_mode;
 
 osThreadId_t check_wifi_led;
 	
@@ -53,12 +56,17 @@ osSemaphoreId_t buzzer_semaphore;
 
 
 void tBrain(void *argument) {
-	uint8_t rx_data;
+	//uint8_t rx_data;
 	
 	for(;;) {
+				test++;
 		osMessageQueueGet(mqid_rx,&rx_data,NULL,osWaitForever);
-		
 		switch(rx_data) {
+			case(0x35):
+				MOVEMENT_STATE = MOVING;
+				MUSIC_STATE = RUNNING_MUSIC;
+				osThreadFlagsSet(self_driving_mode, 0x0001);
+			break;
 			case(0x36):
 				MOVEMENT_STATE = MOVING;
 				MUSIC_STATE = RUNNING_MUSIC;
@@ -89,6 +97,7 @@ void tBrain(void *argument) {
 				break;
 			case(0x42):
 				MUSIC_STATE = VICTORY_MUSIC;
+
 //				osThreadFlagsSet(play_victory_song,0x0001);
 				break;
 			case(0x43):
@@ -100,14 +109,15 @@ void tBrain(void *argument) {
 				MOVEMENT_STATE = MOVING;
 				MUSIC_STATE = RUNNING_MUSIC;
 				osThreadFlagsSet(motor_diag_right,0x0001);
-
 				break;
 			default:
 				MOVEMENT_STATE = STOPPED;
 				MUSIC_STATE = STOP_MUSIC;
 				motorStopAll();
+				blocked = 1;
 				break;				
 		}
+		osDelay(50);
 	}
 }
 
@@ -157,6 +167,22 @@ void tMotorDiagRight(void *argument) {
 	}
 }
 
+void tSelfDrivingMode(void *argument) {
+//	for (;;) {
+//		osThreadFlagsWait(0x0001, osFlagsWaitAny, osWaitForever);
+//		while (blocked == 0) {
+//			motorForward();
+//			osDelay(400);
+//		}
+//		//motorRotateCone();
+//		while (blocked == 1) {
+//			motorRotateCone();
+//		}
+//		//selfDrivingMode();
+//		MUSIC_STATE = STOP_MUSIC;
+//		MOVEMENT_STATE = STOPPED;
+//	}
+}
 
 void tCheckWifiLed(void *argument) {
 	for(;;) {
@@ -295,33 +321,6 @@ void tRedLed250 (void *argument) {
 	}
 }
 
-/**************
-/ MUSIC SEGMENT
-*/
-//void tPlayVictorySong (void *argument) {	
-//	osThreadFlagsWait(0x0001, osFlagsWaitAny, osWaitForever);
-//	osSemaphoreAcquire(buzzer_semaphore, osWaitForever);
-//	for (int i = 0; i < victory_len; i++) {
-//		playNote(Victory[i].noteFreq, Victory[i].duration);
-//	}
-//}
-
-//void tPlayRunningSong (void *argument) { //this is playing victory song for now
-//	osSemaphoreAcquire(buzzer_semaphore, osWaitForever);
-//	for (;;) {
-//		for (int i = 0; i < canonInD_len; i++) {
-//			playNote(canonInD[i].noteFreq, canonInD[i].duration);
-//		}
-//	}
-//} 
-
-//void tPlayCheckWifiSong (void *argument) {
-//	osThreadFlagsWait(0x0001, osFlagsWaitAny, osWaitForever);
-//	osSemaphoreAcquire(buzzer_semaphore, osWaitForever);
-//	for (int i = 0; i < checkwifi_len; i++) {
-//		playNote(checkWifi[i].noteFreq, checkWifi[i].duration);
-//	}
-//}
 
 void tPlaySong (void *argument) {
 	for (;;) {
@@ -392,7 +391,7 @@ int main (void) {
 	buzzer_semaphore = osSemaphoreNew(1,1,NULL);
 
 	// Create Message Queue to store UART inputs
-	mqid_rx = osMessageQueueNew(MQ_SIZE, 1, NULL);
+	mqid_rx = osMessageQueueNew(MQ_SIZE, 2, NULL);
 	
 	// Create tBrain thread to manage all inputs
 	osThreadNew(tBrain, NULL, &thread1_attr_high);
@@ -414,20 +413,8 @@ int main (void) {
 	motor_diag_left = osThreadNew(tMotorDiagLeft, NULL, NULL);
 	motor_diag_right = osThreadNew(tMotorDiagRight, NULL, NULL);
 	
-		//Create threads for checking wifi
-	//check_wifi_led = osThreadNew(tCheckWifiLed, NULL, NULL);
-//	check_wifi_song = osThreadNew(tCheckWifiSong, NULL, NULL);
-	
-	// Create threads for Music
-//	play_checkWifi_song = osThreadNew(tPlayCheckWifiSong, NULL, NULL);
-//	play_victory_song = osThreadNeosThreadNew(tPlaySong, NULL, NULL);w(tPlayVictorySong, NULL, NULL);
-//  play_running_song = osThreadNew(tPlayRunningSong, NULL, NULL);
-	
-	
-
-
-
-
+	// Create thread for self driving mode
+	self_driving_mode = osThreadNew(tSelfDrivingMode, NULL, NULL);
 
 
 	//-------------------//

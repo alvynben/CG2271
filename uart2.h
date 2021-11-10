@@ -8,6 +8,7 @@
 
 #define MQ_SIZE 10
 osMessageQueueId_t mqid_rx;
+uint8_t rx_data;
 
 void InitUART2(uint32_t baud_rate) {
 	uint32_t divisor, bus_clock;
@@ -54,10 +55,10 @@ void InitUART2(uint32_t baud_rate) {
 
 void UART2_IRQHandler() {
 	NVIC_ClearPendingIRQ(UART2_IRQn);
-	uint8_t rx_data;
 	
 	if (UART2->S1 & UART_S1_RDRF_MASK) {
 		rx_data = UART2->D;
-		osMessageQueuePut(mqid_rx, &rx_data, NULL, 0);
+		osMessageQueuePut(mqid_rx, &rx_data, 0, 0);
 	}
+	PORTE->ISFR = 0xffffffff;
 }

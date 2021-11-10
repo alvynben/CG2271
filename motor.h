@@ -1,4 +1,5 @@
 #include "MKL25Z4.h"
+#include "cmsis_os2.h"
 
 #define PTA1_Pin 1 // front left
 #define PTA2_Pin 2 // front left
@@ -10,6 +11,12 @@
 #define PTD5_Pin 5 // rear right
 #define MASK(x) (1 << (x))
 #define TURN_DIAGONAL_VAL 0x0AAA
+#define TURN_DELAY 500
+#define MOVE_DELAY 400
+#define STOP_DELAY 800
+
+volatile int blocked = 0;
+volatile int test = 0;
 
 //eg. LFFOR is read as left side, front wheel, forward direction while 
 //RBBACK is right side, behind wheel, backward direction
@@ -249,6 +256,82 @@ void motorDiagonalLeft() {
   moveSpecificWheel(RBBACK, 0x0000);
 }
 
+
+
+
+void motorRotateCone() {
+	motorLeft();
+	osDelay(TURN_DELAY / 2);
+	
+	//move forward
+	motorForward();
+	osDelay(MOVE_DELAY);
+		motorStopAll();
+	osDelay(STOP_DELAY);
+
+	//motorStopAll();
+	//osDelay(30);
+	
+	//turn 90 degress right
+	motorRight();
+	osDelay(TURN_DELAY);
+	motorStopAll();
+	osDelay(STOP_DELAY);
+
+	//move forward
+	motorForward();
+	osDelay(MOVE_DELAY);
+		motorStopAll();
+	osDelay(STOP_DELAY);
+
+	//motorStopAll();
+	//osDelay(30);
+	
+	//turn 90 degress right
+	motorRight();
+	osDelay(TURN_DELAY);
+		motorStopAll();
+	osDelay(STOP_DELAY);
+
+  //move forward
+	motorForward();
+	osDelay(MOVE_DELAY);
+		motorStopAll();
+	osDelay(STOP_DELAY);
+
+	//motorStopAll();
+	//osDelay(30);
+	
+	//turn 90 degrees right
+	motorRight();
+	osDelay(TURN_DELAY);
+		motorStopAll();
+	osDelay(STOP_DELAY);
+
+	//move forward
+	motorForward();
+	osDelay(MOVE_DELAY);
+		motorStopAll();
+	osDelay(STOP_DELAY);
+
+	//motorStopAll();
+	//osDelay(30);
+	
+	//turn 90 degress left
+	motorLeft();
+	osDelay(TURN_DELAY / 2);
+	motorStopAll();
+}
+ 
+
+void selfDrivingMode() {
+	//if not blocked, move forward
+//	if (blocked == 0) {
+//		while () {
+//			motorForward();
+//		}
+//	} 
+}
 
 void setFreq(int freq) {
   int newMod = 375000 / freq;
