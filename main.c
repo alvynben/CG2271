@@ -31,13 +31,13 @@ typedef enum {
 
 	
 volatile robotState MOVEMENT_STATE = STOPPED;
-volatile musicState MUSIC_STATE= STOP_MUSIC;
+volatile musicState MUSIC_STATE = STOP_MUSIC;
  
 	const osThreadAttr_t thread1_attr_high = {
 	.priority = osPriorityHigh                    //Set initial thread priority to high   
 };
 
-osThreadId_t motor_forward, motor_backward, motor_left, motor_right;
+osThreadId_t motor_forward, motor_backward, motor_left, motor_right, motor_diag_right, motor_diag_left;
 
 osThreadId_t check_wifi_led;
 	
@@ -91,6 +91,17 @@ void tBrain(void *argument) {
 				MUSIC_STATE = VICTORY_MUSIC;
 //				osThreadFlagsSet(play_victory_song,0x0001);
 				break;
+			case(0x43):
+				MOVEMENT_STATE = MOVING;
+				MUSIC_STATE = RUNNING_MUSIC;	
+				osThreadFlagsSet(motor_diag_left,0x0001);	
+				break;
+			case(0x44):
+				MOVEMENT_STATE = MOVING;
+				MUSIC_STATE = RUNNING_MUSIC;
+				osThreadFlagsSet(motor_diag_right,0x0001);
+
+				break;
 			default:
 				MOVEMENT_STATE = STOPPED;
 				MUSIC_STATE = STOP_MUSIC;
@@ -129,6 +140,20 @@ void tMotorLeft(void *argument) {
 		osThreadFlagsWait(0x0001, osFlagsWaitAny, osWaitForever);
 		
 		motorLeft();
+	}
+}
+
+void tMotorDiagLeft(void *argument) {
+	for(;;) {
+		osThreadFlagsWait(0x0001, osFlagsWaitAny, osWaitForever);
+		motorDiagonalLeft();
+	}
+}
+
+void tMotorDiagRight(void *argument) {
+	for(;;) {
+		osThreadFlagsWait(0x0001, osFlagsWaitAny, osWaitForever);
+		motorDiagonalRight();
 	}
 }
 
@@ -385,8 +410,11 @@ int main (void) {
 	motor_left = osThreadNew(tMotorLeft,NULL,NULL);
 	motor_right = osThreadNew(tMotorRight,NULL,NULL);
 	
-		//Create threads for checking wifi
 	osThreadNew(tPlaySong, NULL, NULL);
+	motor_diag_left = osThreadNew(tMotorDiagLeft, NULL, NULL);
+	motor_diag_right = osThreadNew(tMotorDiagRight, NULL, NULL);
+	
+		//Create threads for checking wifi
 	//check_wifi_led = osThreadNew(tCheckWifiLed, NULL, NULL);
 //	check_wifi_song = osThreadNew(tCheckWifiSong, NULL, NULL);
 	

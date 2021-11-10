@@ -9,6 +9,7 @@
 #define PTD4_Pin 4 // rear right
 #define PTD5_Pin 5 // rear right
 #define MASK(x) (1 << (x))
+#define TURN_DIAGONAL_VAL 0x0AAA
 
 //eg. LFFOR is read as left side, front wheel, forward direction while 
 //RBBACK is right side, behind wheel, backward direction
@@ -190,34 +191,63 @@ void motorBackward() {
   moveSpecificWheel(RBBACK, 0x1D4C);
 }
 
+
 void motorRight() {
   moveSpecificWheel(LFFOR, 0x1D4C);
   moveSpecificWheel(LFBACK, 0x0000);
 
-  moveSpecificWheel(RFFOR, 0x1D4C);
-  moveSpecificWheel(RFBACK, 0x1A5E);
+  moveSpecificWheel(RFFOR, 0x0000);
+  moveSpecificWheel(RFBACK, 0x1D4C);
 
   moveSpecificWheel(LBFOR, 0x1D4C);
   moveSpecificWheel(LBBACK, 0x0000);
 
-  moveSpecificWheel(RBFOR, 0x1D4C);
-  moveSpecificWheel(RBBACK, 0x1A5E);
+  moveSpecificWheel(RBFOR, 0x0000);
+  moveSpecificWheel(RBBACK, 0x1D4C);
+}
+
+void motorDiagonalRight() {
+  moveSpecificWheel(LFFOR, 0x1D4C);
+  moveSpecificWheel(LFBACK, 0x0000);
+
+  moveSpecificWheel(RFFOR, 0x0000);
+  moveSpecificWheel(RFBACK, 0x0000);
+
+  moveSpecificWheel(LBFOR, TURN_DIAGONAL_VAL);
+  moveSpecificWheel(LBBACK, 0x0000);
+
+  moveSpecificWheel(RBFOR, TURN_DIAGONAL_VAL);
+  moveSpecificWheel(RBBACK, 0x0000);
 }
 
 void motorLeft() {
-  moveSpecificWheel(LFFOR, 0x1D4C);
-  moveSpecificWheel(LFBACK, 0x1A5E);
+  moveSpecificWheel(LFFOR, 0x0000);
+  moveSpecificWheel(LFBACK, 0x1D4C);
 
   moveSpecificWheel(RFFOR, 0x1D4C);
   moveSpecificWheel(RFBACK, 0x0000);
 
-  moveSpecificWheel(LBFOR, 0x1D4C);
-  moveSpecificWheel(LBBACK, 0x1A5E);
+  moveSpecificWheel(LBFOR, 0x0000);
+  moveSpecificWheel(LBBACK, 0x1D4C);
 
   moveSpecificWheel(RBFOR, 0x1D4C);
   moveSpecificWheel(RBBACK, 0x0000);
 }
 
+
+void motorDiagonalLeft() {
+  moveSpecificWheel(LFFOR, 0x0000);
+  moveSpecificWheel(LFBACK, 0x0000);
+//0x0DAD
+  moveSpecificWheel(RFFOR, 0x1D4C);
+  moveSpecificWheel(RFBACK, 0x0000);
+
+  moveSpecificWheel(LBFOR, TURN_DIAGONAL_VAL);
+  moveSpecificWheel(LBBACK, 0x0000);
+
+  moveSpecificWheel(RBFOR, TURN_DIAGONAL_VAL);
+  moveSpecificWheel(RBBACK, 0x0000);
+}
 
 
 void setFreq(int freq) {
