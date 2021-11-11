@@ -18,6 +18,8 @@
 #include "music.h"
 #include "ultrasonic.h"
 
+
+
 typedef enum {
 	MOVING,
 	STOPPED
@@ -33,6 +35,7 @@ typedef enum {
 	
 volatile robotState MOVEMENT_STATE = STOPPED;
 volatile musicState MUSIC_STATE = STOP_MUSIC;
+	
 //volatile selfDrivingMode = 
  
 	const osThreadAttr_t thread1_attr_high = {
@@ -46,8 +49,6 @@ volatile musicState MUSIC_STATE = STOP_MUSIC;
 
 osThreadId_t motor_forward, motor_backward, motor_left, motor_right, motor_diag_right, motor_diag_left;
 
-osThreadId_t self_driving_mode;
-
 osThreadId_t check_wifi_led;
 	
 osThreadId_t running_led_green, still_led_green, led_red_500, led_red_250;
@@ -60,12 +61,6 @@ osSemaphoreId_t red_led_semaphore;
 
 osSemaphoreId_t buzzer_semaphore;
 
-uint32_t threshold = 1000;
-volatile uint32_t counter = 0; 
-volatile uint32_t hasStarted = 0; 
-uint32_t stage = 0; 
-
-osEventFlagsId_t ultrasonicCounterEvent; 
 osMessageQueueId_t autonomousMotionMsgQueue;
 
 const osThreadAttr_t ultrasonic_trigger_attr = {
@@ -74,37 +69,31 @@ const osThreadAttr_t ultrasonic_trigger_attr = {
 
 void PORTD_IRQHandler(void) {
 	NVIC_ClearPendingIRQ(PORTD_IRQn);
-	if (hasStarted == 0) {
-		osEventFlagsSet(ultrasonicCounterEvent, 0x01);
-		hasStarted = 1;
-	} else if (hasStarted == 1) {
-		osEventFlagsClear(ultrasonicCounterEvent, 0x01); 
-		if (counter <= threshold) {
-			stage++; 
-			osMessageQueuePut(autonomousMotionMsgQueue, &stage, NULL, 0); 
+	// ONLY WORKS IN AUTO MODE
+	if (stage == 1 || stage == 3) {
+		if (hasStarted == 0) {
+			hasStarted = 1;
+			timerStart = osKernelGetSysTimerCount();
+		} else if (hasStarted == 1) {
+			timerEnd = osKernelGetSysTimerCount();
+			
+			uint32_t timeDiff = timerEnd - timerStart;
+			if (timeDiff <= threshold) {
+				stage++; 
+				osMessageQueuePut(autonomousMotionMsgQueue, &stage, NULL, 0); 
+			}
+			hasStarted = 0;
 		}
-		counter = 0;
-		hasStarted = 0;
 	}
 	PORTD->ISFR = 0xffffffff;
 }
 
-void ultrasonic_counter_thread (void *argument) { 
-  // ...
-  for (;;) {
-		osEventFlagsWait(ultrasonicCounterEvent, 0x01, osFlagsNoClear, osWaitForever);
-		counter++; 
-	}
-}
-
 void ultrasonic_trigger_thread (void *argument) {
 	for (;;) {
-		if (stage == 0 || stage == 3) {
 		PTA->PDOR |= MASK(TRIGGER);
 		osDelay(1);
 		PTA->PDOR &= ~MASK(TRIGGER);
-		osDelay(60); // 60ms 18e70
-		}
+		osDelay(30); // 60ms 18e70
 	}
 }
 
@@ -113,24 +102,25 @@ void autonomous_thread (void *argument) {
 	for (;;) {
 		osMessageQueueGet(autonomousMotionMsgQueue, &stage, NULL, osWaitForever); 
 		switch (stage) {
-			case 0:
-				osThreadFlagsSet(motor_forward,0x001);
-				break;
 			case 1:
+				//osThreadFlagsSet(motor_forward,0x001);
+				motorForward();
+				break;
+			case 2:
 				// Insert circular motion function thingy 
 				// Stage++:
 				motorStopAll();
 //				MOVEMENT_STATE = STOPPED;
 //				MUSIC_STATE = STOP_MUSIC;
-				motorRotateCone();
-				stage = 3;
-				osMessageQueuePut(autonomousMotionMsgQueue, &stage, NULL, osWaitForever);
-				break;
-			case 2:
-				osThreadFlagsSet(motor_forward,0x001);
+//				motorRotateCone();
+//				stage = 3;
+//				osMessageQueuePut(autonomousMotionMsgQueue, &stage, NULL, osWaitForever);
 				break;
 			case 3:
-				motorStopAll();
+//				osThreadFlagsSet(motor_forward,0x001);
+				break;
+			case 4:
+//				motorStopAll();
 				break;
 			default:
 				break;
@@ -144,14 +134,12 @@ void tBrain(void *argument) {
 	//uint8_t rx_data;
 	
 	for(;;) {
-				test++;
 		osMessageQueueGet(mqid_rx,&rx_data,NULL,osWaitForever);
 		switch(rx_data) {
 			case(0x35):
 				MOVEMENT_STATE = MOVING;
 				MUSIC_STATE = RUNNING_MUSIC;
-				// osThreadFlagsSet(self_driving_mode, 0x0001);
-				stage = 0;
+				stage = 1;
 				osMessageQueuePut(autonomousMotionMsgQueue,&stage,NULL,0);
 			break;
 			case(0x36):
@@ -252,23 +240,6 @@ void tMotorDiagRight(void *argument) {
 		osThreadFlagsWait(0x0001, osFlagsWaitAny, osWaitForever);
 		motorDiagonalRight();
 	}
-}
-
-void tSelfDrivingMode(void *argument) {
-//	for (;;) {
-//		osThreadFlagsWait(0x0001, osFlagsWaitAny, osWaitForever);
-//		while (blocked == 0) {
-//			motorForward();
-//			osDelay(400);
-//		}
-//		//motorRotateCone();
-//		while (blocked == 1) {
-//			motorRotateCone();
-//		}
-//		//selfDrivingMode();
-//		MUSIC_STATE = STOP_MUSIC;
-//		MOVEMENT_STATE = STOPPED;
-//	}
 }
 
 void tCheckWifiLed(void *argument) {
@@ -502,13 +473,11 @@ int main (void) {
 	motor_diag_right = osThreadNew(tMotorDiagRight, NULL, NULL);
 	
 	// Create thread for self driving mode
-	self_driving_mode = osThreadNew(ultrasonic_trigger_thread, NULL, NULL);
-	osThreadNew(ultrasonic_counter_thread, NULL, NULL);    // Create application main thread
+	osThreadNew(ultrasonic_trigger_thread, NULL, NULL);
 	osThreadNew(autonomous_thread, NULL, NULL); 
 	// osThreadNew(ultrasonic_trigger_thread, NULL, &ultrasonic_trigger_attr);
 	
 	autonomousMotionMsgQueue = osMessageQueueNew(1, sizeof(uint8_t), NULL); 
-	ultrasonicCounterEvent = osEventFlagsNew(NULL);
 
 
 	//-------------------//
