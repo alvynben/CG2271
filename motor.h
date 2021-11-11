@@ -10,7 +10,7 @@
 #define PTD4_Pin 4 // rear right
 #define PTD5_Pin 5 // rear right
 #define MASK(x) (1 << (x))
-#define TURN_DIAGONAL_VAL 0x0AAA
+#define TURN_DIAGONAL_VAL 0x00AA
 #define TURN_DELAY 500
 #define MOVE_DELAY 400
 #define STOP_DELAY 800
@@ -249,10 +249,10 @@ void motorDiagonalLeft() {
   moveSpecificWheel(RFFOR, 0x1D4C);
   moveSpecificWheel(RFBACK, 0x0000);
 
-  moveSpecificWheel(LBFOR, TURN_DIAGONAL_VAL);
-  moveSpecificWheel(LBBACK, 0x0000);
+  moveSpecificWheel(LBFOR, 0x0000);
+  moveSpecificWheel(LBBACK, TURN_DIAGONAL_VAL);
 
-  moveSpecificWheel(RBFOR, TURN_DIAGONAL_VAL);
+  moveSpecificWheel(RBFOR, 0x1D4C);
   moveSpecificWheel(RBBACK, 0x0000);
 }
 
