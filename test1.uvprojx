@@ -417,6 +417,11 @@
               <FileType>5</FileType>
               <FilePath>.\ledBlink.h</FilePath>
             </File>
+            <File>
+              <FileName>ultrasonic.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\ultrasonic.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -220,11 +220,11 @@ void motorDiagonalRight() {
   moveSpecificWheel(RFFOR, 0x0000);
   moveSpecificWheel(RFBACK, 0x0000);
 
-  moveSpecificWheel(LBFOR, TURN_DIAGONAL_VAL);
+  moveSpecificWheel(LBFOR, 0x1D4C);
   moveSpecificWheel(LBBACK, 0x0000);
 
-  moveSpecificWheel(RBFOR, TURN_DIAGONAL_VAL);
-  moveSpecificWheel(RBBACK, 0x0000);
+  moveSpecificWheel(RBFOR, 0x0000);
+  moveSpecificWheel(RBBACK, TURN_DIAGONAL_VAL);
 }
 
 void motorLeft() {
