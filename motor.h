@@ -10,7 +10,7 @@
 #define PTD4_Pin 4 // rear right
 #define PTD5_Pin 5 // rear right
 #define MASK(x) (1 << (x))
-#define TURN_DIAGONAL_VAL 0x0AAA
+#define TURN_DIAGONAL_VAL 0x00AA
 #define TURN_DELAY 500
 #define MOVE_DELAY 400
 #define STOP_DELAY 800
@@ -137,6 +137,7 @@ void InitMotor(void) {
 
 
 
+
 // Function takes in a specific wheel type and direction, along with the channel value to be supplied to the TPMx_CnV register.
 void moveSpecificWheel(wheel_t type, uint16_t pwm_val) {
   switch(type) {
@@ -181,6 +182,20 @@ void motorForward() {
   moveSpecificWheel(LBBACK, 0x0000);
 
   moveSpecificWheel(RBFOR, 0x1D4C);
+  moveSpecificWheel(RBBACK, 0x0000);
+}
+
+void motorForwardSlow() {
+  moveSpecificWheel(LFFOR, 0x0F53);
+  moveSpecificWheel(LFBACK, 0x0000);
+
+  moveSpecificWheel(RFFOR, 0x0F53);
+  moveSpecificWheel(RFBACK, 0x0000);
+
+  moveSpecificWheel(LBFOR, 0x0F53);
+  moveSpecificWheel(LBBACK, 0x0000);
+
+  moveSpecificWheel(RBFOR, 0x0F53);
   moveSpecificWheel(RBBACK, 0x0000);
 }
 
@@ -249,10 +264,10 @@ void motorDiagonalLeft() {
   moveSpecificWheel(RFFOR, 0x1D4C);
   moveSpecificWheel(RFBACK, 0x0000);
 
-  moveSpecificWheel(LBFOR, TURN_DIAGONAL_VAL);
-  moveSpecificWheel(LBBACK, 0x0000);
+  moveSpecificWheel(LBFOR, 0x0000);
+  moveSpecificWheel(LBBACK, TURN_DIAGONAL_VAL);
 
-  moveSpecificWheel(RBFOR, TURN_DIAGONAL_VAL);
+  moveSpecificWheel(RBFOR, 0x1D4C);
   moveSpecificWheel(RBBACK, 0x0000);
 }
 
@@ -260,6 +275,8 @@ void motorDiagonalLeft() {
 
 
 void motorRotateCone() {
+	motorStopAll();
+	osDelay(STOP_DELAY);
 	motorLeft();
 	osDelay(TURN_DELAY / 2);
 	

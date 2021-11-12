@@ -3,7 +3,7 @@
 <title>Static Call Graph - [.\Objects\test1.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\Objects\test1.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Thu Nov 11 23:28:38 2021
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060750: Last Updated: Fri Nov 12 10:56:46 2021
 <BR><P>
 <H3>Maximum Stack Usage =        120 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -562,7 +562,7 @@ Global Symbols
 <LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[c2]"></a>osKernelStart</STRONG> (Thumb, 36 bytes, Stack size 8 bytes, rtx_kernel.o(.text.osKernelStart))
+<P><STRONG><a name="[c3]"></a>osKernelStart</STRONG> (Thumb, 36 bytes, Stack size 8 bytes, rtx_kernel.o(.text.osKernelStart))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = osKernelStart
 </UL>
 <BR>[Called By]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
@@ -576,7 +576,6 @@ Global Symbols
 <LI><a href="#[7f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MessageQueueGet
 </UL>
 <BR>[Called By]<UL><LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;tBrain
-<LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;autonomous_thread
 <LI><a href="#[3b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxTimerThread
 </UL>
 
@@ -594,9 +593,7 @@ Global Symbols
 <LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxMemoryPoolAlloc
 <LI><a href="#[70]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__aeabi_memcpy
 </UL>
-<BR>[Called By]<UL><LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;tBrain
-<LI><a href="#[19]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART2_IRQHandler
-<LI><a href="#[2a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;PORTD_IRQHandler
+<BR>[Called By]<UL><LI><a href="#[19]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART2_IRQHandler
 <LI><a href="#[3c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osRtxTimerTick
 </UL>
 
@@ -880,7 +877,7 @@ Global Symbols
 <LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;tGreenLedStill
 </UL>
 
-<P><STRONG><a name="[c0]"></a>osSemaphoreNew</STRONG> (Thumb, 36 bytes, Stack size 16 bytes, rtx_semaphore.o(.text.osSemaphoreNew))
+<P><STRONG><a name="[c1]"></a>osSemaphoreNew</STRONG> (Thumb, 36 bytes, Stack size 16 bytes, rtx_semaphore.o(.text.osSemaphoreNew))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = osSemaphoreNew
 </UL>
 <BR>[Called By]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
@@ -920,17 +917,17 @@ Global Symbols
 <LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;tMotorBackward
 </UL>
 
-<P><STRONG><a name="[c1]"></a>osThreadNew</STRONG> (Thumb, 36 bytes, Stack size 16 bytes, rtx_thread.o(.text.osThreadNew))
+<P><STRONG><a name="[c2]"></a>osThreadNew</STRONG> (Thumb, 36 bytes, Stack size 16 bytes, rtx_thread.o(.text.osThreadNew))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = osThreadNew
 </UL>
 <BR>[Called By]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[bf]"></a>InitGPIOLedBlink</STRONG> (Thumb, 54 bytes, Stack size 0 bytes, main.o(i.InitGPIOLedBlink))
+<P><STRONG><a name="[c0]"></a>InitGPIOLedBlink</STRONG> (Thumb, 54 bytes, Stack size 0 bytes, main.o(i.InitGPIOLedBlink))
 <BR><BR>[Called By]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[be]"></a>InitGreenLED</STRONG> (Thumb, 316 bytes, Stack size 0 bytes, main.o(i.InitGreenLED))
+<P><STRONG><a name="[bf]"></a>InitGreenLED</STRONG> (Thumb, 316 bytes, Stack size 0 bytes, main.o(i.InitGreenLED))
 <BR><BR>[Called By]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
@@ -940,13 +937,14 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorStopAll
 </UL>
 <BR>[Called By]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
+<LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;autonomous_thread
 </UL>
 
-<P><STRONG><a name="[bc]"></a>InitPWM</STRONG> (Thumb, 150 bytes, Stack size 0 bytes, main.o(i.InitPWM))
+<P><STRONG><a name="[bd]"></a>InitPWM</STRONG> (Thumb, 150 bytes, Stack size 0 bytes, main.o(i.InitPWM))
 <BR><BR>[Called By]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[bd]"></a>InitSongs</STRONG> (Thumb, 116 bytes, Stack size 0 bytes, main.o(i.InitSongs))
+<P><STRONG><a name="[be]"></a>InitSongs</STRONG> (Thumb, 116 bytes, Stack size 0 bytes, main.o(i.InitSongs))
 <BR><BR>[Called By]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
@@ -961,11 +959,10 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[68]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[2a]"></a>PORTD_IRQHandler</STRONG> (Thumb, 122 bytes, Stack size 8 bytes, main.o(i.PORTD_IRQHandler))
-<BR><BR>[Stack]<UL><LI>Max Depth = 64<LI>Call Chain = PORTD_IRQHandler &rArr; osMessageQueuePut &rArr; osRtxPostProcess &rArr; osRtxErrorNotify &rArr; __ARM_common_switch8
+<P><STRONG><a name="[2a]"></a>PORTD_IRQHandler</STRONG> (Thumb, 110 bytes, Stack size 8 bytes, main.o(i.PORTD_IRQHandler))
+<BR><BR>[Stack]<UL><LI>Max Depth = 32<LI>Call Chain = PORTD_IRQHandler &rArr; osKernelGetSysTimerCount &rArr; svcRtxKernelGetSysTimerCount
 </UL>
-<BR>[Calls]<UL><LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osMessageQueuePut
-<LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osKernelGetSysTimerCount
+<BR>[Calls]<UL><LI><a href="#[7b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osKernelGetSysTimerCount
 <LI><a href="#[b0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_ClearPendingIRQ
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_mkl25z4.o(RESET)
@@ -997,8 +994,8 @@ Global Symbols
 <LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemCoreClockUpdate
 <LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;tRunningLedGreen
 <LI><a href="#[49]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;tBrain
-<LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;moveSpecificWheel
-<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;greenLedControlSingle
+<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;moveSpecificWheel
+<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;greenLedControlSingle
 </UL>
 
 <P><STRONG><a name="[59]"></a>_mutex_acquire</STRONG> (Thumb, 24 bytes, Stack size 8 bytes, rtx_lib.o(i._mutex_acquire), UNUSED, KEPT)
@@ -1036,12 +1033,13 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[63]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_postsh_1
 </UL>
 
-<P><STRONG><a name="[56]"></a>autonomous_thread</STRONG> (Thumb, 60 bytes, Stack size 0 bytes, main.o(i.autonomous_thread))
-<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = autonomous_thread &rArr; osMessageQueueGet &rArr; osRtxPostProcess &rArr; osRtxErrorNotify &rArr; __ARM_common_switch8
+<P><STRONG><a name="[56]"></a>autonomous_thread</STRONG> (Thumb, 128 bytes, Stack size 0 bytes, main.o(i.autonomous_thread))
+<BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = autonomous_thread &rArr; motorForward &rArr; moveSpecificWheel &rArr; __ARM_common_switch8
 </UL>
-<BR>[Calls]<UL><LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osMessageQueueGet
+<BR>[Calls]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;moveSpecificWheel
 <LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorStopAll
 <LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorForward
+<LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InitMotor
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> main.o(i.main)
 </UL>
@@ -1050,7 +1048,7 @@ Global Symbols
 <LI><a href="#[4b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;tGreenLedStill
 </UL>
 
-<P><STRONG><a name="[ba]"></a>greenLedControlSingle</STRONG> (Thumb, 408 bytes, Stack size 4 bytes, main.o(i.greenLedControlSingle))
+<P><STRONG><a name="[bb]"></a>greenLedControlSingle</STRONG> (Thumb, 408 bytes, Stack size 4 bytes, main.o(i.greenLedControlSingle))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = greenLedControlSingle &rArr; __ARM_common_switch8
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__ARM_common_switch8
@@ -1058,7 +1056,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[4a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;tRunningLedGreen
 </UL>
 
-<P><STRONG><a name="[bb]"></a>initUltraSonic</STRONG> (Thumb, 140 bytes, Stack size 8 bytes, main.o(i.initUltraSonic))
+<P><STRONG><a name="[bc]"></a>initUltraSonic</STRONG> (Thumb, 140 bytes, Stack size 8 bytes, main.o(i.initUltraSonic))
 <BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = initUltraSonic
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__NVIC_EnableIRQ
@@ -1071,30 +1069,30 @@ Global Symbols
 <LI><a href="#[4d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;tRedLed250
 </UL>
 
-<P><STRONG><a name="[68]"></a>main</STRONG> (Thumb, 298 bytes, Stack size 0 bytes, main.o(i.main))
+<P><STRONG><a name="[68]"></a>main</STRONG> (Thumb, 284 bytes, Stack size 0 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = main &rArr; SystemCoreClockUpdate &rArr; __ARM_common_switch8
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osThreadNew
-<LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osSemaphoreNew
+<BR>[Calls]<UL><LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osThreadNew
+<LI><a href="#[c1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osSemaphoreNew
 <LI><a href="#[9d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osMessageQueueNew
-<LI><a href="#[c2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osKernelStart
+<LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osKernelStart
 <LI><a href="#[7c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osKernelInitialize
 <LI><a href="#[b2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemCoreClockUpdate
-<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;initUltraSonic
+<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;initUltraSonic
 <LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InitUART2
-<LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InitSongs
-<LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InitPWM
+<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InitSongs
+<LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InitPWM
 <LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InitMotor
-<LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InitGreenLED
-<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InitGPIOLedBlink
+<LI><a href="#[bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InitGreenLED
+<LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InitGPIOLedBlink
 </UL>
 <BR>[Called By]<UL><LI><a href="#[67]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__rt_entry_main
 </UL>
 
-<P><STRONG><a name="[c3]"></a>motorBackward</STRONG> (Thumb, 68 bytes, Stack size 4 bytes, main.o(i.motorBackward))
+<P><STRONG><a name="[c4]"></a>motorBackward</STRONG> (Thumb, 68 bytes, Stack size 4 bytes, main.o(i.motorBackward))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = motorBackward &rArr; moveSpecificWheel &rArr; __ARM_common_switch8
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;moveSpecificWheel
+<BR>[Calls]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;moveSpecificWheel
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;tMotorBackward
 </UL>
@@ -1102,7 +1100,7 @@ Global Symbols
 <P><STRONG><a name="[c5]"></a>motorDiagonalLeft</STRONG> (Thumb, 68 bytes, Stack size 4 bytes, main.o(i.motorDiagonalLeft))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = motorDiagonalLeft &rArr; moveSpecificWheel &rArr; __ARM_common_switch8
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;moveSpecificWheel
+<BR>[Calls]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;moveSpecificWheel
 </UL>
 <BR>[Called By]<UL><LI><a href="#[53]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;tMotorDiagLeft
 </UL>
@@ -1110,7 +1108,7 @@ Global Symbols
 <P><STRONG><a name="[c6]"></a>motorDiagonalRight</STRONG> (Thumb, 68 bytes, Stack size 4 bytes, main.o(i.motorDiagonalRight))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = motorDiagonalRight &rArr; moveSpecificWheel &rArr; __ARM_common_switch8
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;moveSpecificWheel
+<BR>[Calls]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;moveSpecificWheel
 </UL>
 <BR>[Called By]<UL><LI><a href="#[54]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;tMotorDiagRight
 </UL>
@@ -1118,7 +1116,7 @@ Global Symbols
 <P><STRONG><a name="[b9]"></a>motorForward</STRONG> (Thumb, 68 bytes, Stack size 4 bytes, main.o(i.motorForward))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = motorForward &rArr; moveSpecificWheel &rArr; __ARM_common_switch8
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;moveSpecificWheel
+<BR>[Calls]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;moveSpecificWheel
 </UL>
 <BR>[Called By]<UL><LI><a href="#[4e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;tMotorForward
 <LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;autonomous_thread
@@ -1127,7 +1125,7 @@ Global Symbols
 <P><STRONG><a name="[c7]"></a>motorLeft</STRONG> (Thumb, 68 bytes, Stack size 4 bytes, main.o(i.motorLeft))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = motorLeft &rArr; moveSpecificWheel &rArr; __ARM_common_switch8
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;moveSpecificWheel
+<BR>[Calls]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;moveSpecificWheel
 </UL>
 <BR>[Called By]<UL><LI><a href="#[50]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;tMotorLeft
 </UL>
@@ -1135,7 +1133,7 @@ Global Symbols
 <P><STRONG><a name="[c8]"></a>motorRight</STRONG> (Thumb, 68 bytes, Stack size 4 bytes, main.o(i.motorRight))
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = motorRight &rArr; moveSpecificWheel &rArr; __ARM_common_switch8
 </UL>
-<BR>[Calls]<UL><LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;moveSpecificWheel
+<BR>[Calls]<UL><LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;moveSpecificWheel
 </UL>
 <BR>[Called By]<UL><LI><a href="#[51]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;tMotorRight
 </UL>
@@ -1146,7 +1144,7 @@ Global Symbols
 <LI><a href="#[ab]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InitMotor
 </UL>
 
-<P><STRONG><a name="[c4]"></a>moveSpecificWheel</STRONG> (Thumb, 70 bytes, Stack size 4 bytes, main.o(i.moveSpecificWheel))
+<P><STRONG><a name="[ba]"></a>moveSpecificWheel</STRONG> (Thumb, 70 bytes, Stack size 4 bytes, main.o(i.moveSpecificWheel))
 <BR><BR>[Stack]<UL><LI>Max Depth = 12<LI>Call Chain = moveSpecificWheel &rArr; __ARM_common_switch8
 </UL>
 <BR>[Calls]<UL><LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__ARM_common_switch8
@@ -1156,7 +1154,8 @@ Global Symbols
 <LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorForward
 <LI><a href="#[c6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorDiagonalRight
 <LI><a href="#[c5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorDiagonalLeft
-<LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorBackward
+<LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorBackward
+<LI><a href="#[56]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;autonomous_thread
 </UL>
 
 <P><STRONG><a name="[8b]"></a>osRtxErrorNotify</STRONG> (Thumb, 32 bytes, Stack size 0 bytes, rtx_config.o(i.osRtxErrorNotify))
@@ -1182,11 +1181,10 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[52]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;tPlaySong
 </UL>
 
-<P><STRONG><a name="[49]"></a>tBrain</STRONG> (Thumb, 270 bytes, Stack size 0 bytes, main.o(i.tBrain))
-<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = tBrain &rArr; osMessageQueuePut &rArr; osRtxPostProcess &rArr; osRtxErrorNotify &rArr; __ARM_common_switch8
+<P><STRONG><a name="[49]"></a>tBrain</STRONG> (Thumb, 258 bytes, Stack size 0 bytes, main.o(i.tBrain))
+<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = tBrain &rArr; osMessageQueueGet &rArr; osRtxPostProcess &rArr; osRtxErrorNotify &rArr; __ARM_common_switch8
 </UL>
 <BR>[Calls]<UL><LI><a href="#[a2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osThreadFlagsSet
-<LI><a href="#[81]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osMessageQueuePut
 <LI><a href="#[7e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osMessageQueueGet
 <LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[ac]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorStopAll
@@ -1208,7 +1206,7 @@ Global Symbols
 <BR><BR>[Stack]<UL><LI>Max Depth = 16<LI>Call Chain = tMotorBackward &rArr; osThreadFlagsWait
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osThreadFlagsWait
-<LI><a href="#[c3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorBackward
+<LI><a href="#[c4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;motorBackward
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> main.o(i.main)
 </UL>
@@ -1285,7 +1283,7 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[a0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osSemaphoreRelease
 <LI><a href="#[9f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osSemaphoreAcquire
 <LI><a href="#[cc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
-<LI><a href="#[ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;greenLedControlSingle
+<LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;greenLedControlSingle
 <LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;greenLedControlAll
 <LI><a href="#[b3]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__ARM_common_switch8
 </UL>
@@ -1308,7 +1306,7 @@ Local Symbols
 </UL>
 
 <P><STRONG><a name="[b1]"></a>__NVIC_EnableIRQ</STRONG> (Thumb, 26 bytes, Stack size 0 bytes, main.o(i.__NVIC_EnableIRQ))
-<BR><BR>[Called By]<UL><LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;initUltraSonic
+<BR><BR>[Called By]<UL><LI><a href="#[bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;initUltraSonic
 <LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;InitUART2
 </UL>
 
