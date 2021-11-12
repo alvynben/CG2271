@@ -188,13 +188,14 @@
         <Ww>
           <count>7</count>
           <WinNumber>1</WinNumber>
-          <ItemText>stage,0x0A</ItemText>
+          <ItemText>stage</ItemText>
         </Ww>
         <Ww>
           <count>8</count>
           <WinNumber>1</WinNumber>
           <ItemText>counter,0x0A</ItemText>
         </Ww>
+<<<<<<< HEAD
         <Ww>
           <count>9</count>
           <WinNumber>1</WinNumber>
@@ -225,6 +226,8 @@
           <WinNumber>1</WinNumber>
           <ItemText>\\test1\main.c\stage</ItemText>
         </Ww>
+=======
+>>>>>>> 49fcfb9d125ce19ebebea2df7b35b874f5f0b1e5
       </WatchWindow1>
       <WatchWindow2>
         <Ww>
@@ -243,11 +246,6 @@
           <ItemText>((TPM_Type *)(0x40039000u))</ItemText>
         </Ww>
       </WatchWindow2>
-      <ScvdPack>
-        <Filename>C:\Users\ASUS\AppData\Local\Arm\Packs\ARM\CMSIS\5.6.0\CMSIS\RTOS2\RTX\RTX5.scvd</Filename>
-        <Type>ARM.CMSIS.5.6.0</Type>
-        <SubType>1</SubType>
-      </ScvdPack>
       <Tracepoint>
         <THDelay>0</THDelay>
       </Tracepoint>
