@@ -1,22 +1,23 @@
 #include "MKL25Z4.h"
 #include "cmsis_os2.h"
 
-#define PTA1_Pin 1 // front left
-#define PTA2_Pin 2 // front left
-#define PTD0_Pin 0 // front right
-#define PTD1_Pin 1 // front right
-#define PTD2_Pin 2 // rear left
-#define PTD3_Pin 3 // rear left
-#define PTD4_Pin 4 // rear right
-#define PTD5_Pin 5 // rear right
+// Define pins for motors.
+#define PTA1_Pin 1 // Front Left Forward
+#define PTA2_Pin 2 // Front Left Backward
+#define PTD0_Pin 0 // Front Right Forward
+#define PTD1_Pin 1 // Front Right Backward
+#define PTD2_Pin 2 // Rear Left Forward
+#define PTD3_Pin 3 // Rear Left Backward
+#define PTD4_Pin 4 // Rear Right Forward
+#define PTD5_Pin 5 // Rear Right Backward
+
 #define MASK(x) (1 << (x))
+
+// Define CONSTANTS for motor movement.
 #define TURN_DIAGONAL_VAL 0x00AA
 #define TURN_DELAY 500
 #define MOVE_DELAY 400
 #define STOP_DELAY 800
-
-volatile int blocked = 0;
-volatile int test = 0;
 
 //eg. LFFOR is read as left side, front wheel, forward direction while 
 //RBBACK is right side, behind wheel, backward direction
@@ -31,8 +32,8 @@ typedef enum {
   RBBACK
 } wheel_t;
 
+// Stops all motors.
 void motorStopAll() {
-  //TPM2_C0SC &= (TPM_CnSC_ELSB(0) | TPM_CnSC_MSB(0));
   TPM2_C0V = 0x0000;
   TPM2_C1V = 0x0000;
   TPM0_C0V = 0x0000;
@@ -135,19 +136,16 @@ void InitMotor(void) {
   motorStopAll();
 }
 
-
-
-
-// Function takes in a specific wheel type and direction, along with the channel value to be supplied to the TPMx_CnV register.
+// Function takes in a specific wheel type and direction,
+// along with the channel value to be supplied to the 
+// TPMx_CnV register.
 void moveSpecificWheel(wheel_t type, uint16_t pwm_val) {
   switch(type) {
   case LFFOR:
     TPM2_C0V = pwm_val;
-    //delay(0xFFFFF);
     break;
   case LFBACK:
     TPM2_C1V = pwm_val;
-    //delay(0xFFFFF);
     break;
   case RFFOR:
     TPM0_C0V = pwm_val;
@@ -171,6 +169,7 @@ void moveSpecificWheel(wheel_t type, uint16_t pwm_val) {
   //0x1D4C for 100%;
 }
 
+// Moves the BOT forward.
 void motorForward() {
   moveSpecificWheel(LFFOR, 0x1D4C);
   moveSpecificWheel(LFBACK, 0x0000);
@@ -185,6 +184,7 @@ void motorForward() {
   moveSpecificWheel(RBBACK, 0x0000);
 }
 
+// Moves the BOT forward slowly.
 void motorForwardSlow() {
   moveSpecificWheel(LFFOR, 0x0F53);
   moveSpecificWheel(LFBACK, 0x0000);
@@ -199,6 +199,7 @@ void motorForwardSlow() {
   moveSpecificWheel(RBBACK, 0x0000);
 }
 
+// Moves the BOT backwards.
 void motorBackward() {
   moveSpecificWheel(LFFOR, 0x0000);
   moveSpecificWheel(LFBACK, 0x1D4C);
@@ -213,7 +214,7 @@ void motorBackward() {
   moveSpecificWheel(RBBACK, 0x1D4C);
 }
 
-
+// Moves the BOT to the right.
 void motorRight() {
   moveSpecificWheel(LFFOR, 0x1D4C);
   moveSpecificWheel(LFBACK, 0x0000);
@@ -228,6 +229,7 @@ void motorRight() {
   moveSpecificWheel(RBBACK, 0x1D4C);
 }
 
+// Moves the BOT to the diagonal right.
 void motorDiagonalRight() {
   moveSpecificWheel(LFFOR, 0x1D4C);
   moveSpecificWheel(LFBACK, 0x0000);
@@ -242,6 +244,7 @@ void motorDiagonalRight() {
   moveSpecificWheel(RBBACK, TURN_DIAGONAL_VAL);
 }
 
+// Moves the BOT to the left.
 void motorLeft() {
   moveSpecificWheel(LFFOR, 0x0000);
   moveSpecificWheel(LFBACK, 0x1D4C);
@@ -256,11 +259,11 @@ void motorLeft() {
   moveSpecificWheel(RBBACK, 0x0000);
 }
 
-
+// Moves the BOT to the diagonal left.
 void motorDiagonalLeft() {
   moveSpecificWheel(LFFOR, 0x0000);
   moveSpecificWheel(LFBACK, 0x0000);
-//0x0DAD
+
   moveSpecificWheel(RFFOR, 0x1D4C);
   moveSpecificWheel(RFBACK, 0x0000);
 
@@ -271,85 +274,62 @@ void motorDiagonalLeft() {
   moveSpecificWheel(RBBACK, 0x0000);
 }
 
-
-
-
+// Moves the BOT around the cone in self-driving mode.
 void motorRotateCone() {
 	motorStopAll();
 	osDelay(STOP_DELAY);
 	motorLeft();
 	osDelay(TURN_DELAY / 2);
 	
-	//move forward
+	// Move Forward.
 	motorForward();
 	osDelay(MOVE_DELAY);
 		motorStopAll();
 	osDelay(STOP_DELAY);
-
-	//motorStopAll();
-	//osDelay(30);
 	
-	//turn 90 degress right
+	// Turn 90 Degrees Right.
 	motorRight();
 	osDelay(TURN_DELAY);
 	motorStopAll();
 	osDelay(STOP_DELAY);
 
-	//move forward
+	// Move Forward.
 	motorForward();
 	osDelay(MOVE_DELAY);
 		motorStopAll();
 	osDelay(STOP_DELAY);
-
-	//motorStopAll();
-	//osDelay(30);
 	
-	//turn 90 degress right
+	// Turn 90 Degrees Right.
 	motorRight();
 	osDelay(TURN_DELAY);
 		motorStopAll();
 	osDelay(STOP_DELAY);
 
-  //move forward
+  // Move Forward.
 	motorForward();
 	osDelay(MOVE_DELAY);
 		motorStopAll();
 	osDelay(STOP_DELAY);
-
-	//motorStopAll();
-	//osDelay(30);
 	
-	//turn 90 degrees right
+	// Turn 90 Degrees Right.
 	motorRight();
 	osDelay(TURN_DELAY);
 		motorStopAll();
 	osDelay(STOP_DELAY);
 
-	//move forward
+	// Move Forward.
 	motorForward();
 	osDelay(MOVE_DELAY);
 		motorStopAll();
 	osDelay(STOP_DELAY);
-
-	//motorStopAll();
-	//osDelay(30);
 	
-	//turn 90 degress left
+	// Turn 90 Degrees Right.
 	motorLeft();
 	osDelay(TURN_DELAY / 2);
 	motorStopAll();
 }
- 
 
-void selfDrivingMode() {
-	//if not blocked, move forward
-//	if (blocked == 0) {
-//		while () {
-//			motorForward();
-//		}
-//	} 
-}
-
+// Sets the frequency for a PWM pin.
 void setFreq(int freq) {
   int newMod = 375000 / freq;
   TPM1->MOD = newMod;
@@ -357,6 +337,7 @@ void setFreq(int freq) {
   // Edge-Aligned PWM
   // Update SnC register: CMOD = 01, PS = 111 (128)
   TPM1->SC &= ~((TPM_SC_CMOD_MASK) | (TPM_SC_PS_MASK));
+	
   // Set CMOD to 1 == LPTPM counter increments on every LPTPM counter clock
   // PS 7 is 128 prescaler
   TPM1->SC |= (TPM_SC_CMOD(1) | TPM_SC_PS(7));

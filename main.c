@@ -19,12 +19,13 @@
 #include "ultrasonic.h"
 
 
-
+// Enum to denote if BOT is MOVING/STOPPED.
 typedef enum {
 	MOVING,
 	STOPPED
 } robotState;
 
+// Enum to denote the music BOT should play.
 typedef enum {
 	RUNNING_MUSIC,
 	VICTORY_MUSIC,
@@ -32,57 +33,61 @@ typedef enum {
 	STOP_MUSIC
 	} musicState;
 
-	
+// Initialise BOT as STOPPED.
 volatile robotState MOVEMENT_STATE = STOPPED;
 volatile musicState MUSIC_STATE = STOP_MUSIC;
-	
-//volatile selfDrivingMode = 
- 
-	const osThreadAttr_t thread1_attr_high = {
-	.priority = osPriorityHigh                    //Set initial thread priority to high   
-};
-	
-	const osThreadAttr_t movementThread1_attr_high = {
-	.priority = osPriorityHigh                    //Set initial thread priority to high   
-};
 
-
+// Initialise Thread IDs.
 osThreadId_t motor_forward, motor_backward, motor_left, motor_right, motor_diag_right, motor_diag_left;
-
 osThreadId_t check_wifi_led;
-	
 osThreadId_t running_led_green, still_led_green, led_red_500, led_red_250;
-	
 osThreadId_t play_victory_song, play_running_song, play_checkWifi_song;
-	
+
+// Initialise Semaphore IDs.
 osSemaphoreId_t green_led_semaphore;
-
 osSemaphoreId_t red_led_semaphore;
-
 osSemaphoreId_t buzzer_semaphore;
 
-//osMessageQueueId_t autonomousMotionMsgQueue;
-
-
-
+// Create high priority for 10us pulse for Ultrasonic Sensor.
 const osThreadAttr_t ultrasonic_trigger_attr = {
 	.priority = osPriorityHigh
 };
 
+// Create high priority for tBrain
+const osThreadAttr_t thread1_attr_high = {
+	.priority = osPriorityHigh   
+};
+
+/*
+	This IRQ Handler handles inputs from the HC-SR04
+	Ultrasonic Sensor. 
+
+	It only works in stage 2 or 4,
+	because only stage 2 & 4 require the bot to stop
+	based on input from the Ultrasonic Sensor.
+*/
 void PORTD_IRQHandler(void) {
 	NVIC_ClearPendingIRQ(PORTD_IRQn);
-	// ONLY WORKS IN AUTO MODE
+	// Checks if BOT is in stage 2 or 4
 	if (stage == 2 || stage == 4) {
+		// If hasStarted == 0, the IRQHandler is detecting a rising edge.
+		// Else, the IRQ Handler is detecting a falling edge.
 		if (hasStarted == 0) {
 			hasStarted = 1;
 			timerStart = osKernelGetSysTimerCount();
 		} else if (hasStarted == 1) {
 			timerEnd = osKernelGetSysTimerCount();
-			
 			uint32_t timeDiff = timerEnd - timerStart;
+			
+			/* 
+				If the time between rising edge and falling edge
+				is below a threshold, the BOT is close to an
+				obstacle.
+			*/
 			if (timeDiff <= threshold) {
+				// If close to an obstacle, proceed to the next
+				// stage of operation.
 				stage++; 
-				//osMessageQueuePut(autonomousMotionMsgQueue, &stage, NULL, 0); 
 			}
 			hasStarted = 0;
 		}
@@ -92,33 +97,46 @@ void PORTD_IRQHandler(void) {
 
 void ultrasonic_trigger_thread (void *argument) {
 	for (;;) {
+		// Sends a 1ms pulse to the HC-SR04 to trigger it.
+		// Unfortunately, 1us pulse doesn't seem to activate it.
 		PTA->PDOR |= MASK(TRIGGER);
 		osDelay(1);
 		PTA->PDOR &= ~MASK(TRIGGER);
-		osDelay(60); // 60ms 18e70
+		
+		// Wait 60ms between each pulse
+		osDelay(60);
 	}
 }
 
 
 void autonomous_thread (void *argument) {
-	// ...
 	for (;;) {
-	//	osMessageQueueGet(autonomousMotionMsgQueue, &stage, NULL, osWaitForever); 
 		switch (stage) {
+			
+			// Stage 1 stops the BOT
 			case 1:
-				//osThreadFlagsSet(motor_forward,0x001);
 				InitMotor();
 				motorStopAll();
 
 				stage = 2;
 				break;
+			
+			// Stage 2 moves the BOT Forward.
+			// PORTD_IRQHandler is activated to check for obstacles.
 			case 2:
+				MOVEMENT_STATE = MOVING;
+				MUSIC_STATE = RUNNING_MUSIC;
 				motorForward();
 			break;
+			
+			// Stage 3 stops the BOT, and rotates it around the cone.
 			case 3:	
 				InitMotor();
-				//motorStopAll();
-			
+				
+				// Stops the BOT
+				MOVEMENT_STATE = STOPPED;
+				MUSIC_STATE = STOP_MUSIC;
+				
 			  moveSpecificWheel(LFFOR, 0x0001);
 				moveSpecificWheel(LFBACK, 0x0001);
  
@@ -131,31 +149,31 @@ void autonomous_thread (void *argument) {
 				moveSpecificWheel(RBFOR, 0x0001);
 				moveSpecificWheel(RBBACK, 0x0001);
 			
-				MOVEMENT_STATE = STOPPED;
-				MUSIC_STATE = STOP_MUSIC;
+				
+				// Enable the BOT to move around the cone.
+				MOVEMENT_STATE = MOVING;
+				MUSIC_STATE = RUNNING_MUSIC;
+				motorRotateCone();
+				
+				// Move the BOT to the next stage. 
+				stage = 4;
 				break;
-				//osDelay(2000);
 			
-//				MOVEMENT_STATE = STOPPED;
-//				MUSIC_STATE = STOP_MUSIC;
-
-//				MOVEMENT_STATE = MOVING;
-//				MUSIC_STATE = RUNNING_MUSIC;
-//				motorRotateCone();
-//				//stage = 4;
-////				osMessageQueuePut(autonomousMotionMsgQueue, &stage, NULL, osWaitForever);
-//				break;
-//			case 4:
-//				motorForward();
-////				osThreadFlagsSet(motor_forward,0x001);
-//				break;
-////			case 5:
-////				InitMotor();
-////				motorStopAll();
-////				MOVEMENT_STATE = STOPPED;
-////				MUSIC_STATE = STOP_MUSIC;
-
-//				break;
+			// Move the BOT back to the stop block.
+			case 4:
+				// Enable the BOT to move forward.
+				motorForward();
+				break;
+			
+			// Stop the BOT once it reaches the stop block.
+			// Make the BOT play victory music.
+			case 5:
+				InitMotor();
+				motorStopAll();
+				MOVEMENT_STATE = STOPPED;
+				MUSIC_STATE = VICTORY_MUSIC;
+			
+			// Do nothing if self-driving has not been activated.
 			default:
 				break;
 				
@@ -165,71 +183,65 @@ void autonomous_thread (void *argument) {
 
 
 void tBrain(void *argument) {
-	//uint8_t rx_data;
 	
 	for(;;) {
+		
+		// Wait for update in rx_data from UART2_IRQHandler.
 		osMessageQueueGet(mqid_rx,&rx_data,NULL,osWaitForever);
 		switch(rx_data) {
-			case(0x35):
+			case(0x35): // Activate SELF-DRIVING.
 				MOVEMENT_STATE = MOVING;
 				MUSIC_STATE = RUNNING_MUSIC;
 				stage = 1;
-				//osMessageQueuePut(autonomousMotionMsgQueue,&stage,NULL,0);
 			break;
-			case(0x36):
+			case(0x36): // Move FORWARD.
 				MOVEMENT_STATE = MOVING;
 				MUSIC_STATE = RUNNING_MUSIC;
 				osThreadFlagsSet(motor_forward,0x0001);
 				break;
-			case(0x37):
+			case(0x37): // Move BACKWARDS.
 				MOVEMENT_STATE = MOVING;
 				MUSIC_STATE = RUNNING_MUSIC;
 				osThreadFlagsSet(motor_backward,0x0001);
 				break;
-//			case(0x38):
-//				osThreadFlagsSet(motor_stop,0x0001);
-//				break;
-			case(0x39):
+			case(0x39): // Move LEFT.
 				MOVEMENT_STATE = MOVING;
 				MUSIC_STATE = RUNNING_MUSIC;
 				osThreadFlagsSet(motor_left,0x0001);
 				break;
-			case(0x40): 
+			case(0x40): // Move RIGHT.
 				MOVEMENT_STATE = MOVING;
 				MUSIC_STATE = RUNNING_MUSIC;
 				osThreadFlagsSet(motor_right,0x0001);
 				break;
-			case(0x41):
+			case(0x41): // Check WIFI.
 				MUSIC_STATE = CHECK_WIFI_MUSIC;
 				osThreadFlagsSet(check_wifi_led,0x0001);
-//				osThreadFlagsSet(play_checkWifi_song,0x0001);
 				break;
-			case(0x42):
+			case(0x42): // Play VICTORY_MUSIC.
 				MUSIC_STATE = VICTORY_MUSIC;
-
-//				osThreadFlagsSet(play_victory_song,0x0001);
 				break;
-			case(0x43):
+			case(0x43): // Move DIAGONAL LEFT.
 				MOVEMENT_STATE = MOVING;
 				MUSIC_STATE = RUNNING_MUSIC;	
 				osThreadFlagsSet(motor_diag_left,0x0001);	
 				break;
-			case(0x44):
+			case(0x44): // Move DIAGONAL RIGHT.
 				MOVEMENT_STATE = MOVING;
 				MUSIC_STATE = RUNNING_MUSIC;
 				osThreadFlagsSet(motor_diag_right,0x0001);
 				break;
-			default:
+			default: // Stop BOT.
 				MOVEMENT_STATE = STOPPED;
 				MUSIC_STATE = STOP_MUSIC;
 				motorStopAll();
-				blocked = 1;
 				break;				
 		}
-		osDelay(100);
+		osDelay(100); // Delay tBrain after each user command.
 	}
 }
 
+// Moves BOT forward.
 void tMotorForward(void *argument) {
 	for(;;) {
 		osThreadFlagsWait(0x0001, osFlagsWaitAny, osWaitForever);
@@ -238,6 +250,7 @@ void tMotorForward(void *argument) {
 	}
 }
 
+// Moves BOT backward.
 void tMotorBackward(void *argument) {
 	for(;;) {
 		osThreadFlagsWait(0x0001, osFlagsWaitAny, osWaitForever);
@@ -246,6 +259,7 @@ void tMotorBackward(void *argument) {
 	}
 }
 
+// Moves BOT to the right.
 void tMotorRight(void *argument) {
 	for(;;) {
 		osThreadFlagsWait(0x0001, osFlagsWaitAny, osWaitForever);
@@ -254,6 +268,7 @@ void tMotorRight(void *argument) {
 	}
 }
 
+// Moves BOT to the left.
 void tMotorLeft(void *argument) {
 	for(;;) {
 		osThreadFlagsWait(0x0001, osFlagsWaitAny, osWaitForever);
@@ -262,6 +277,7 @@ void tMotorLeft(void *argument) {
 	}
 }
 
+// Moves BOT to diagonal left.
 void tMotorDiagLeft(void *argument) {
 	for(;;) {
 		osThreadFlagsWait(0x0001, osFlagsWaitAny, osWaitForever);
@@ -269,6 +285,7 @@ void tMotorDiagLeft(void *argument) {
 	}
 }
 
+// Moves BOT to diagonal right.
 void tMotorDiagRight(void *argument) {
 	for(;;) {
 		osThreadFlagsWait(0x0001, osFlagsWaitAny, osWaitForever);
@@ -276,6 +293,7 @@ void tMotorDiagRight(void *argument) {
 	}
 }
 
+// Handles user checking WIFI.
 void tCheckWifiLed(void *argument) {
 	for(;;) {
 		osThreadFlagsWait(0x0001, osFlagsWaitAny, osWaitForever);
@@ -292,8 +310,9 @@ void tCheckWifiLed(void *argument) {
 	}
 }
 
+// Handles the green LEDs when BOT is RUNNING.
+// The Green LEDs will be turn on and off one by one.
 void tRunningLedGreen (void *argument) {
-  // ...
   for (;;) {
 			if (MOVEMENT_STATE == MOVING) {
 				osSemaphoreAcquire(green_led_semaphore, osWaitForever);
@@ -365,6 +384,8 @@ void tRunningLedGreen (void *argument) {
 	}
 }
 
+// Handles the green LEDs when BOT is STOPPED.
+// The Green LEDs will all stay on.
 void tGreenLedStill(void *argument) {
 	for(;;) {
 		if (MOVEMENT_STATE == STOPPED && MUSIC_STATE == STOP_MUSIC) {
@@ -387,6 +408,8 @@ void tGreenLedStill(void *argument) {
 	}
 }
 
+// Handles the red LEDs when BOT is MOVING.
+// Flashes the red LEDs every 500ms.
 void tRedLed500 (void *argument) {
   for (;;) {
 		if (MOVEMENT_STATE == MOVING) {
@@ -400,6 +423,8 @@ void tRedLed500 (void *argument) {
 	}
 }
 
+// Handles the red LEDs when BOT is STOPPED.
+// Flashes the red LEDs every 250ms.
 void tRedLed250 (void *argument) {
   for (;;) {
 		if (MOVEMENT_STATE == STOPPED) {
@@ -413,7 +438,7 @@ void tRedLed250 (void *argument) {
 	}
 }
 
-
+// Make the BOT play the correct song based on MUSIC_STATE.
 void tPlaySong (void *argument) {
 	for (;;) {
 		switch (MUSIC_STATE) {
@@ -456,66 +481,58 @@ void tPlaySong (void *argument) {
 
 int main (void) {
  
-  // System Initialization
+  // System Initialization.
   SystemCoreClockUpdate();
 	InitUART2(BAUD_RATE);
 	InitPWM();
 	InitSongs();
-	//InitGPIO();
 	InitMotor();
-//	stopAllRGB();
 	InitGreenLED();
 	InitGPIOLedBlink();
 	initUltraSonic();
 	
-  // ...
-//	while(1) {
-//		//motorForward();
-//	}
-//	
-	
- 
-  osKernelInitialize();                 // Initialize CMSIS-RTOS
+  osKernelInitialize();                 // Initialize CMSIS-RTOS.
 	//--------------------//
 	
-	// Create a Semaphore
+	// Create Semaphores.
 	green_led_semaphore = osSemaphoreNew(1,1,NULL);
 	red_led_semaphore = osSemaphoreNew(1,1,NULL);
 	buzzer_semaphore = osSemaphoreNew(1,1,NULL);
 
-	// Create Message Queue to store UART inputs
+	// Create Message Queue to store UART inputs.
 	mqid_rx = osMessageQueueNew(MQ_SIZE, 2, NULL);
 	
-	// Create tBrain thread to manage all inputs
+	// Create thread to manage all UART inputs.
 	osThreadNew(tBrain, NULL, &thread1_attr_high);
 	
-	
-	// Create threads for LED strips
+	// Create threads to control green and red LEDs.
 	running_led_green = osThreadNew(tRunningLedGreen, NULL, NULL);
 	still_led_green = osThreadNew(tGreenLedStill, NULL, NULL);
 	led_red_500 = osThreadNew(tRedLed500, NULL, NULL);
 	led_red_250 = osThreadNew(tRedLed250, NULL, NULL);
 	
-	// Create threads to run Motors
+	// Create thread to control PWM to play music.
+	osThreadNew(tPlaySong, NULL, NULL);
+	
+	// Create threads to control motors.
 	motor_forward = osThreadNew(tMotorForward,NULL,NULL);
 	motor_backward = osThreadNew(tMotorBackward,NULL,NULL);
 	motor_left = osThreadNew(tMotorLeft,NULL,NULL);
 	motor_right = osThreadNew(tMotorRight,NULL,NULL);
-	
-	osThreadNew(tPlaySong, NULL, NULL);
 	motor_diag_left = osThreadNew(tMotorDiagLeft, NULL, NULL);
 	motor_diag_right = osThreadNew(tMotorDiagRight, NULL, NULL);
 	
-	// Create thread for self driving mode
-	osThreadNew(ultrasonic_trigger_thread, NULL, &ultrasonic_trigger_attr);
-	osThreadNew(autonomous_thread, NULL, NULL); 
-	// osThreadNew(ultrasonic_trigger_thread, NULL, &ultrasonic_trigger_attr);
+	// Create threads for SELF DRIVING MODE.
 	
-	//autonomousMotionMsgQueue = osMessageQueueNew(1, sizeof(uint8_t), NULL); 
-
-
+	// This thread sends a trigger pulse to HC-SR04 every 60ms.
+	osThreadNew(ultrasonic_trigger_thread, NULL, &ultrasonic_trigger_attr);
+	
+	// This thread handles the self-driving by controlling the BOT directly,
+	// when self-driving is activated.
+	osThreadNew(autonomous_thread, NULL, NULL); 
+	
 	//-------------------//
 	
-  osKernelStart();                      // Start thread execution
+  osKernelStart();                      // Start thread execution.
   for (;;) {}
 }

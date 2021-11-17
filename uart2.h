@@ -1,15 +1,18 @@
 #include "MKL25Z4.h"
 #include "cmsis_os2.h"
 
+// Define UART2 Pin Values.
 #define BAUD_RATE 9600
 #define PTE22_UART2_TX 22
 #define PTE23_UART2_RX 23
 #define UART2_INT_PRIO 128
 
-#define MQ_SIZE 10
+// Initialise Message Queue to store rx_data.
 osMessageQueueId_t mqid_rx;
+#define MQ_SIZE 10
 uint8_t rx_data;
 
+// Initialise registers for UART2.
 void InitUART2(uint32_t baud_rate) {
 	uint32_t divisor, bus_clock;
 	
@@ -53,10 +56,14 @@ void InitUART2(uint32_t baud_rate) {
 	UART2->C2 |= UART_C2_RIE_MASK;
 }
 
+// IRQHandler activates whenever user sends
+// an input from the app.
 void UART2_IRQHandler() {
 	NVIC_ClearPendingIRQ(UART2_IRQn);
 	
 	if (UART2->S1 & UART_S1_RDRF_MASK) {
+		// If input received, read value and
+		// store in MessageQueue for tBrain to receive.
 		rx_data = UART2->D;
 		osMessageQueuePut(mqid_rx, &rx_data, 0, 0);
 	}

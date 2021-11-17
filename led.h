@@ -1,4 +1,11 @@
- #include "MKL25Z4.h"
+/*
+	This entire file is used for debugging purposes.
+	
+	The LED can be turned on or off in other threads
+	to help debug other processes.
+*/
+
+#include "MKL25Z4.h"
 typedef enum {RED, GREEN, BLUE} colour_t;
 typedef enum {LED_OFF, LED_ON} led_status;
 
@@ -6,8 +13,6 @@ typedef enum {LED_OFF, LED_ON} led_status;
 #define GREEN_LED 19 // PortB Pin 19
 #define BLUE_LED 1 // PortD Pin 1
 #define MASK(x) (1 << (x))
-
-//volatile int count = 0;
 
 static void delay(volatile uint32_t nof) {
   while(nof!=0) {
@@ -61,27 +66,3 @@ void led_control(colour_t colour, led_status status) {
 			break;
 		}
 }
-
-//void led_red_thread (void *argument) {
-// 
-//  // ...
-//  for (;;) {
-//		led_control(RED, LED_ON);
-//		delay(0x80000);
-//		led_control(RED, LED_OFF);
-//		delay(0x80000);
-//		count++;
-//	}
-//}
-
-//void led_green_thread (void *argument) {
-// 
-//  // ...
-//  for (;;) {
-//		led_control(GREEN,LED_ON);
-//		delay(0x80000);
-//		led_control(GREEN,LED_OFF);
-//		delay(0x80000);
-//		count++;
-//	}
-//}

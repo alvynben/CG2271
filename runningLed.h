@@ -1,5 +1,6 @@
 #include "MKL25Z4.h"
-	 
+
+// Define pins for Green LEDs.
 #define PTE_GREEN_LED_1 20
 #define PTE_GREEN_LED_2 21
 #define PTE_GREEN_LED_3 22
@@ -13,24 +14,18 @@
 
 #define MASK(x) (1 << (x))
 
+// Enum to denote if LED should be ON or OFF.
 typedef enum {ON, OFF} ledStatus;
 
-//typedef enum {RUNNING, STILL} ledMode;
-//struct GreenLedInfo{
-//	ledMode mode;
-//	int ledNum;
-//} greenLedInfo;
-
-//volatile struct GreenLedInfo greenled;
-
+// Set the first LED to turn on when BOT starts running.
 volatile int ledNum = 1;
 
 void InitGreenLED(void) {
-	// Enable Clock to Port E&C
+	// Enable Clock to Port E&C.
 	SIM->SCGC5 |= SIM_SCGC5_PORTE_MASK;
 	SIM->SCGC5 |= SIM_SCGC5_PORTC_MASK;
 	
-	// Make all pins to GPIO
+	// Set all pins to GPIO.
 	PORTE->PCR[PTE_GREEN_LED_1] &= ~PORT_PCR_MUX_MASK; // Reset/Clear
 	PORTE->PCR[PTE_GREEN_LED_1] |= PORT_PCR_MUX(1); // Set to Alternative 1
 	PORTE->PCR[PTE_GREEN_LED_2] &= ~PORT_PCR_MUX_MASK; // Reset/Clear
@@ -52,11 +47,14 @@ void InitGreenLED(void) {
 	PORTC->PCR[PTC_GREEN_LED_10] &= ~PORT_PCR_MUX_MASK; // Reset/Clear
 	PORTC->PCR[PTC_GREEN_LED_10] |= PORT_PCR_MUX(1); // Set to Alternative 1
 
-	// Set pins to output
+	// Set pins to output.
 	PTE->PDDR |= MASK(PTE_GREEN_LED_1) | MASK(PTE_GREEN_LED_2) | MASK(PTE_GREEN_LED_3) | MASK(PTE_GREEN_LED_5) | MASK(PTE_GREEN_LED_6);
 	PTC->PDDR |= MASK(PTC_GREEN_LED_7) | MASK(PTC_GREEN_LED_8) | MASK(PTC_GREEN_LED_9) | MASK(PTC_GREEN_LED_10) | MASK(PTC_GREEN_LED_4) ;
 }
 
+// Control a single LED.
+// Choose if the LED is ON or OFF with status.
+// Choose which LED to affect based on ledNum {1 - 10}.
 void greenLedControlSingle(ledStatus status, int ledNum) {
 	switch(ledNum) {
 		case 1:
@@ -134,6 +132,7 @@ void greenLedControlSingle(ledStatus status, int ledNum) {
 	}
 }
 
+// Sets all green LEDs to ON or OFF.
 void greenLedControlAll(ledStatus status) {
 	if (status) {
 		PTE->PCOR |= MASK(PTE_GREEN_LED_1);
